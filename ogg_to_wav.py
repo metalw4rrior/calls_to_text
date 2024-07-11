@@ -1,22 +1,33 @@
 import os
-from pydub import AudioSegment
+import ffmpeg
 
-def convert_ogg_to_wav(source_directory, destination_directory):
-    if not os.path.exists(destination_directory):
-        os.makedirs(destination_directory)
+def convert_ogg_to_wav(input_dir, output_dir):
+    os.makedirs(output_dir, exist_ok=True)
     
-    for filename in os.listdir(source_directory):
+    for filename in os.listdir(input_dir):
         if filename.endswith('.ogg'):
-            ogg_path = os.path.join(source_directory, filename)
-            wav_filename = os.path.splitext(filename)[0] + '.wav'
-            wav_path = os.path.join(destination_directory, wav_filename)
+            input_path = os.path.join(input_dir, filename)
+            output_path = os.path.join(output_dir, f"{os.path.splitext(filename)[0]}.wav")
             
-            # Конвертация файла
-            audio = AudioSegment.from_ogg(ogg_path)
-            audio.export(wav_path, format='wav')
-            print(f"Конвертирован: {filename} -> {wav_filename}")
+            try:
+                ffmpeg.input(input_path).output(output_path, acodec='pcm_s16le', ar=16000).run(overwrite_output=True)
+                print(f"Конвертация {filename} завершена.")
+            except ffmpeg.Error as e:
+                print(f"Ошибка конвертации файла {filename}: {e.stderr}")
+            except Exception as e:
+                print(f"Не удалось сконвертировать файл {filename}: {str(e)}")
 
 if __name__ == "__main__":
-    source_directory = '/home/Music/test/'  # Путь к папке с OGG файлами
-    destination_directory = '/home/Music/test/wav/'  # Путь к папке для сохранения WAV файлов
-    convert_ogg_to_wav(source_directory, destination_directory)
+    input_directory = '/home/kozlova/Music/test/calls_to_text/wav/'
+
+    output_directory ='/home/kozlova/Music/test/calls_to_text/wav1/'
+
+    
+    convert_ogg_to_wav(input_directory, output_directory)
+
+
+
+
+
+
+
