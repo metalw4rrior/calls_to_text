@@ -1,0 +1,151 @@
+/* index.css */
+/* Header Styles */
+
+
+header h1 {
+    font-size: 1.6em;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: 1px;
+    color: #ffffff;
+}
+
+/* index.css */
+
+/* Гамбургер-меню */
+.navbar-toggler {
+    border: none;
+    background: transparent;
+    outline: none;
+    box-shadow: none;
+}
+
+.navbar-toggler-icon {
+    font-size: 1.5em;
+    color: #ffffff; /* Белый цвет иконки */
+    transition: color 0.3s ease;
+}
+
+.navbar-toggler:hover .navbar-toggler-icon {
+    color: #ffffff; /* Белый цвет при наведении */
+}
+
+.sidebar {
+    background-color: #00a89d; /* Глубокий бирюзовый цвет */
+    padding: 20px;
+    position: fixed;
+    top: 70px; /* Располагаем ниже заголовка */
+    bottom: 0;
+    left: 0;
+    width: 250px;
+    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease, width 0.3s ease;
+}
+
+.sidebar.show {
+    transform: translateX(0);
+}
+
+.sidebar .nav-link {
+    color: #ffffff; /* Белый цвет текста */
+    border-radius: 0.25rem; /* Скругление углов кнопок */
+    padding: 5px; /* Отступы внутри кнопок */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Плавные переходы при наведении */
+}
+
+.sidebar .nav-link:hover {
+    background-color: #008080; /* Светло-серый фон при наведении */
+    color: #f1f1f1; /* Цвет текста при наведении */
+}
+
+
+
+
+
+/* Уменьшение отступов, когда боковая панель скрыта */
+.main-content.sidebar-hidden {
+    margin-left: 0;
+}
+
+
+/* Main Content Styles */
+.main-content {
+    margin-left: 10px; /* Отступ, чтобы контент не перекрывал боковую панель */
+    padding: 20px;
+    margin-top: 30px;
+    transition: margin-left 0.3s ease;
+}
+
+
+.table th, .table td {
+    text-align: left;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #e0f7fa; /* Лёгкий бирюзовый оттенок для строк */
+}
+.pagination {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    list-style: none;
+    border-radius: 0.25rem;
+}
+
+.page-item {
+    margin: 0 0.125rem; /* Отступы между элементами пагинации */
+}
+
+.page-link {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.25;
+    text-align: center;
+    text-decoration: none;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    color: #007bff;
+    background-color: #fff;
+    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    text-align: center; /* Убедитесь, что текст внутри ссылки выровнен по центру */
+}
+
+.page-link:hover {
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+    color: #0056b3;
+}
+
+.page-item.active .page-link {
+    z-index: 1;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
+/* Стили для разделителей "..." */
+.page-item .page-link.dots {
+    pointer-events: none;
+    color: #6c757d;
+    background-color: transparent;
+    border: none;
+    font-size: 1rem; /* Убедитесь, что размер шрифта соответствует остальным элементам */
+    padding: 0.5rem 0.75rem; /* Используйте такие же отступы, как и для обычных ссылок */
+    text-align: center; /* Выравнивание текста внутри разделителя */
+}
+
+.page-item .page-link.dots:hover {
+    background-color: transparent;
+    color: #6c757d;
+    border: none; /* Убедитесь, что нет лишних границ */
+}
+

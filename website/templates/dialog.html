@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление Ключевыми словами</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dialog.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<!--    <link rel="stylesheet" href="../static/dialog.css">-->
+    <link rel="stylesheet" href="../static/buttons.css">
+    <link rel="stylesheet" href="../static/blocks.css">
+</head>
+<body>
+
+    <!-- Сайдбар -->
+    <header>
+        <div class="d-flex">
+            <!-- Гамбургер меню -->
+            <button class="navbar-toggler" type="button" id="sidebarToggle">
+                <span class="navbar-toggler-icon">
+                    <i class="fas fa-bars"></i>
+                </span>
+            </button>
+            <!-- Заголовок -->
+            <h1 class="operators-header">Управление Ключевыми словами</h1>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <div id="sidebarMenu" class="sidebar">
+        <h3>Меню</h3>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="/"><i class="fas fa-home"></i> На главную</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/operators"><i class="fas fa-user"></i> Операторы</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/chart"><i class="fas fa-chart-line"></i> Статистика</a>
+            </li>
+        </ul>
+        <!-- Форма выхода -->
+        <form action="{{ url_for('app.logout') }}" method="POST" style="margin: 0;">
+            <button type="submit" class="btn btn-danger">Выйти</button>
+        </form>
+    </div>
+
+    <div class="container">
+        <!-- Основное содержимое страницы -->
+        <div id="content" class="container-fluid">
+
+            <!-- Отображение сообщений -->
+            {% if error_message %}
+                <div class="alert alert-danger mt-4" role="alert">
+                    {{ error_message }}
+                </div>
+            {% endif %}
+            {% if success_message %}
+                <div class="alert alert-success mt-4" role="alert">
+                    {{ success_message }}
+                </div>
+            {% endif %}
+
+            <!-- Форма для добавления ключевых слов -->
+            <h2 class="mt-4">Добавить Ключевое слово</h2>
+            <form action="/dialog" method="post" class="mb-4">
+                <div class="form-group">
+                    <label for="category">Категория:</label>
+                    <select id="category" name="category" class="form-control" required>
+                        {% for category in categories %}
+                        <option value="{{ category.name }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="keyword">Ключевое слово:</label>
+                    <input type="text" id="keyword" name="keyword" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Добавить Ключевое слово</button>
+            </form>
+
+            <!-- Список ключевых слов с возможностью удаления -->
+            <h2 class="mt-4">Список Ключевых слов</h2>
+            <div class="accordion" id="keywordsAccordion">
+                {% for category, keywords in keywords.items() %}
+                <div class="card">
+                    <div class="card-header" id="heading{{ loop.index }}">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse{{ loop.index }}" aria-expanded="true" aria-controls="collapse{{ loop.index }}">
+                                {{ category }}
+                            </button>
+                        </h2>
+                    </div>
+
+                    <div id="collapse{{ loop.index }}" class="collapse {% if loop.first %}show{% endif %}" aria-labelledby="heading{{ loop.index }}" data-parent="#keywordsAccordion">
+                        <div class="card-body">
+                            <ul class="list-group">
+                                {% for keyword in keywords %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ keyword.keyword }}
+                                    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal{{ keyword.id }}">
+                                        Удалить
+                                    </button>
+
+                                    <!-- Модальное окно -->
+                                    <div class="modal fade" id="deleteModal{{ keyword.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{ keyword.id }}" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="deleteModalLabel{{ keyword.id }}">Подтвердите удаление</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Вы уверены, что хотите удалить ключевое слово "{{ keyword.keyword }}"?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                                                    <form action="/dialog" method="post" class="mb-0">
+                                                        <input type="hidden" name="keyword_id" value="{{ keyword.id }}">
+                                                        <button type="submit" class="btn btn-danger">Удалить</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="../static/operators.js"></script>
+
+</body>
+</html>
+

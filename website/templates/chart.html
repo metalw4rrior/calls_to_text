@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Графики данных звонков</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../static/chart.css">
+    <link rel="stylesheet" href="../static/buttons.css">
+    <link rel="stylesheet" href="../static/blocks.css">
+
+</head>
+<body>
+<!--    <header>-->
+<!--        <div class="d-flex justify-content-between align-items-center">-->
+<!--            &lt;!&ndash; Гамбургер меню &ndash;&gt;-->
+<!--            <button class="navbar-toggler" type="button" id="sidebarToggle">-->
+<!--                <span class="navbar-toggler-icon">-->
+<!--                    <i class="fas fa-bars"></i>-->
+<!--                </span>-->
+<!--            </button>-->
+<!--            &lt;!&ndash; Заголовок &ndash;&gt;-->
+<!--            <h1>Графики данных звонков</h1>-->
+
+<!--            &lt;!&ndash; Кнопка "Выйти" &ndash;&gt;-->
+<!--            <form action="{{ url_for('app.logout') }}" method="POST" style="margin: 0;">-->
+<!--                <button type="submit" class="btn btn-danger">Выйти</button>-->
+<!--            </form>-->
+<!--        </div>-->
+<!--    </header>-->
+
+<!--    &lt;!&ndash; Sidebar &ndash;&gt;-->
+<!--    <div class="sidebar" id="sidebarMenu">-->
+<!--        <ul class="nav flex-column">-->
+<!--            <li class="nav-item mb-2">-->
+<!--                <a class="nav-link text-white" href="/operators">-->
+<!--                    <i class="fas fa-user-tie"></i> Выборка по операторам-->
+<!--                </a>-->
+<!--            </li>-->
+<!--            <li class="nav-item mb-2">-->
+<!--                <a class="nav-link text-white" href="/">-->
+<!--                    <i class="fas fa-home"></i> На главную-->
+<!--                </a>-->
+<!--            </li>-->
+<!--        </ul>-->
+<!--    </div>-->
+
+    <header>
+        <div class="d-flex">
+            <!-- Гамбургер меню -->
+            <button class="navbar-toggler" type="button" id="sidebarToggle">
+                    <span class="navbar-toggler-icon">
+                        <i class="fas fa-bars"></i>
+                    </span>
+            </button>
+            <!-- Заголовок -->
+            <h1 class="operators-header">Графики данных звонков</h1>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <div id="sidebarMenu" class="sidebar">
+        <h3>Меню</h3>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="/"><i class="fas fa-home"></i> На главную</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/operators"><i class="fas fa-user"></i> Операторы</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/chart"><i class="fas fa-chart-line"></i> Статистика</a>
+            </li>
+        </ul>
+        <!-- Форма выхода -->
+        <form action="{{ url_for('app.logout') }}" method="POST" style="margin: 0;">
+            <button type="submit" class="btn btn-danger">Выйти</button>
+        </form>
+    </div>
+
+    <div class="main-content container mt-4">
+        <div class="row">
+            <!-- Форма фильтрации -->
+            <div class="col-md-6">
+                <form id="filterForm" class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label for="startDate" class="form-label">Начальная дата:</label>
+                        <input type="date" class="form-control" id="startDate" name="start_date" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="endDate" class="form-label">Конечная дата:</label>
+                        <input type="date" class="form-control" id="endDate" name="end_date" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="operatorName" class="form-label">Имя оператора:</label>
+                        <select class="form-select" id="operatorName" name="operator_name">
+                            <option value="">Все операторы</option>
+                            {% for operator in operators %}
+                                <option value="{{ operator }}">{{ operator }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">Применить фильтры</button>
+                    </div>
+                </form>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Распределение результатов звонков по оператору</h5>
+                        <canvas id="resultChart"></canvas>
+                    </div>
+                </div>
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Общее количество звонков по операторам:</h5>
+                        <p id="operatorCount" class="fs-5">Загрузка данных...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Общие графики -->
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Общая статистика результатов звонков</h5>
+                        <canvas id="overallResultChart"></canvas>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Общая статистика по операторам</h5>
+                        <canvas id="overallOperatorChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Sidebar Toggle Script
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebarMenu');
+            const mainContent = document.querySelector('.main-content');
+        
+            sidebarToggle.addEventListener('click', function() {
+                if (sidebar.classList.contains('show')) {
+                    sidebar.classList.remove('show');
+                    mainContent.classList.add('sidebar-hidden');
+                } else {
+                    sidebar.classList.add('show');
+                    mainContent.classList.remove('sidebar-hidden');
+                }
+            });
+        
+            // Функция для обновления графиков по фильтрам
+            function updateCharts(startDate, endDate, operatorName) {
+                // Вывод данных в консоль для отладки
+                console.log(`Start Date: ${startDate}, End Date: ${endDate}, Operator: ${operatorName}`);
+        
+                fetch(`/filtered-data?start_date=${startDate}&end_date=${endDate}&operator_name=${operatorName}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Обновляем график распределения результатов звонков по оператору
+                        new Chart(document.getElementById('resultChart').getContext('2d'), {
+                            type: 'pie',
+                            data: {
+                                labels: data.result_labels,
+                                datasets: [{
+                                    label: 'Распределение результатов звонков',
+                                    data: data.result_values,
+                                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FFA07A', '#20B2AA'],
+                                    borderColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FFA07A', '#20B2AA'],
+                                    borderWidth: 1
+                                }]
+                            }
+                        });
+        
+                        // Обновляем текстовое поле с количеством звонков по операторам
+                        document.getElementById('operatorCount').textContent = `Количество звонков: ${data.total_calls_count}`;
+                    })
+                    .catch(error => console.error('Ошибка при получении данных:', error));
+            }
+        
+            // Изначальная загрузка общих графиков
+            const overallOperatorLabels = {{ overall_operator_labels|tojson }};
+            const overallOperatorValues = {{ overall_operator_values|tojson }};
+            const overallResultLabels = {{ overall_result_labels|tojson }};
+            const overallResultValues = {{ overall_result_values|tojson }};
+        
+            new Chart(document.getElementById('overallOperatorChart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: overallOperatorLabels,
+                    datasets: [{
+                        label: 'Количество звонков по операторам',
+                        data: overallOperatorValues,
+                        backgroundColor: '#36A2EB',
+                        borderColor: '#36A2EB',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        
+            new Chart(document.getElementById('overallResultChart').getContext('2d'), {
+                type: 'pie',
+                data: {
+                    labels: overallResultLabels,
+                    datasets: [{
+                        label: 'Распределение результатов звонков',
+                        data: overallResultValues,
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FFA07A', '#20B2AA'],
+                        borderColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FFA07A', '#20B2AA'],
+                        borderWidth: 1
+                    }]
+                }
+            });
+        
+            // Обработка формы фильтрации
+            document.getElementById('filterForm').addEventListener('submit', function (event) {
+                event.preventDefault();  // Останавливаем стандартное поведение формы
+                const formData = new FormData(event.target);
+                const startDate = formData.get('start_date');
+                const endDate = formData.get('end_date');
+                const operatorName = formData.get('operator_name');
+                updateCharts(startDate, endDate, operatorName);
+            });
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Операторы и звонки</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Custom CSS -->
+<!--    <link rel="stylesheet" href="{{ url_for('static', filename='operators.css') }}">-->
+    <link rel="stylesheet" href="../static/operators.css">
+    <link rel="stylesheet" href="../static/buttons.css">
+    <link rel="stylesheet" href="../static/blocks.css">
+
+</head>
+<body>
+<header>
+    <div class="d-flex">
+        <!-- Гамбургер меню -->
+        <button class="navbar-toggler" type="button" id="sidebarToggle">
+                <span class="navbar-toggler-icon">
+                    <i class="fas fa-bars"></i>
+                </span>
+        </button>
+        <!-- Заголовок -->
+        <h1 class="operators-header">Операторы и звонки</h1>
+    </div>
+</header>
+
+<!-- Sidebar -->
+<div id="sidebarMenu" class="sidebar">
+    <h3>Меню</h3>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link" href="/"><i class="fas fa-home"></i> На главную</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/operators"><i class="fas fa-user"></i> Операторы</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/chart"><i class="fas fa-chart-line"></i> Статистика</a>
+        </li>
+    </ul>
+    <!-- Форма выхода -->
+    <form action="{{ url_for('app.logout') }}" method="POST" style="margin: 0;">
+        <button type="submit" class="btn btn-danger">Выйти</button>
+    </form>
+</div>
+
+    <!-- Main Content -->
+    <main id="main-content" class="container mt-4 text-start">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2>Фильтры</h2>
+            </div>
+            <div class="card-body">
+                <form method="get" action="{{ url_for('app.operators') }}" class="form-inline">
+                    <div class="form-group mb-2 mr-3">
+                        <label for="operator_name" class="mr-2">Имя оператора:</label>
+                        <select id="operator_name" name="operator_name" class="form-control">
+                            <option value="">Выберите оператора</option>
+                            {% for op in operators %}
+                                <option value="{{ op.operator_name }}" {% if op.operator_name == operator_name %}selected{% endif %}>
+                                    {{ op.operator_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group mb-2 mr-3">
+                        <label for="client_number" class="mr-2">Номер клиента:</label>
+                        <input type="text" id="client_number" name="client_number" class="form-control" placeholder="Номер клиента" value="{{ client_number }}">
+                    </div>
+
+                    <div class="form-group mb-2 mr-3">
+                        <label for="date_from" class="mr-2">Дата от:</label>
+                        <input type="date" id="date_from" name="date_from" class="form-control" value="{{ date_from }}">
+                    </div>
+
+                    <div class="form-group mb-2 mr-3">
+                        <label for="date_to" class="mr-2">Дата до:</label>
+                        <input type="date" id="date_to" name="date_to" class="form-control" value="{{ date_to }}">
+                    </div>
+
+                    <div class="form-group mb-2 mr-3">
+                        <label for="sort_by" class="mr-2">Сортировать по:</label>
+                        <select id="sort_by" name="sort_by" class="form-control">
+                            <option value="call_date" {% if sort_by == 'call_date' %}selected{% endif %}>Дате</option>
+                            <option value="call_time" {% if sort_by == 'call_time' %}selected{% endif %}>Времени</option>
+                            <option value="operator_name" {% if sort_by == 'operator_name' %}selected{% endif %}>Имени оператора</option>
+                            <option value="result" {% if sort_by == 'result' %}selected{% endif %}>Результату</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group mb-2 mr-3">
+                        <label for="sort_order" class="mr-2">Порядок сортировки:</label>
+                        <select id="sort_order" name="sort_order" class="form-control">
+                            <option value="ASC" {% if sort_order == 'ASC' %}selected{% endif %}>По возрастанию</option>
+                            <option value="DESC" {% if sort_order == 'DESC' %}selected{% endif %}>По убыванию</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mb-2">Применить фильтры</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Записи звонков</h2>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+<!--                    <table class="table table-striped">-->
+<!--                        <thead>-->
+<!--                            <tr>-->
+<!--                                <th>Номер телефона</th>-->
+<!--                                <th>Имя оператора</th>-->
+<!--                                <th>Дата звонка</th>-->
+<!--                                <th>Время звонка</th>-->
+<!--                                <th>Транскрипция</th>-->
+<!--                                <th>Тип звонка</th>-->
+<!--                                <th>Результат</th>-->
+<!--                            </tr>-->
+<!--                        </thead>-->
+<!--                        <tbody>-->
+<!--                            {% for call in calls %}-->
+<!--                            <tr>-->
+<!--                                <td>{{ call.phone_number }}</td>-->
+<!--                                <td>{{ call.operator_name }}</td>-->
+<!--                                <td>{{ call.call_date }}</td>-->
+<!--                                <td>{{ call.call_time }}</td>-->
+<!--                                <td>{{ call.transcript|replace('\n', '<br>')|safe }}</td>-->
+<!--                                <td>{{ call.call_type }}</td>-->
+<!--                                <td>{{ call.result }}</td>-->
+<!--                            </tr>-->
+<!--                            {% else %}-->
+<!--                            <tr>-->
+<!--                                <td colspan="7" class="text-center">Записи не найдены.</td>-->
+<!--                            </tr>-->
+<!--                            {% endfor %}-->
+<!--                        </tbody>-->
+<!--                    </table>-->
+
+                    {% if calls %}
+                    <div>
+                        <div class="search-header search-container">
+                            <div class="search-item">Номер клиента</div>
+                            <div class="search-item">Имя оператора</div>
+                            <div class="search-item">Дата</div>
+                            <div class="search-item">Время</div>
+                            <div class="search-item">Расшифровка</div>
+                            <div class="search-item">Тип звонка</div>
+                            <div class="search-item">Итог звонка</div>
+                            <div class="search-item">Соответствие категории</div>
+                        </div>
+                        {% for call in calls %}
+                        <div class="search-body search-container">
+                            <div class="search-item">{{ call.phone_number }}</div>
+                            <div class="search-item">{{ call.operator_name }}</div>
+                            <div class="search-item">{{ call.call_date }}</div>
+                            <div class="search-item">{{ call.call_time }}</div>
+                            <div class="search-item">{{ call.transcript | replace('\n', '<br>') | safe }}</div>
+                            <div class="search-item">{{ call.call_type }}</div>
+                            <div class="search-item">{{ call.result }}</div>
+                            <div class="search-item">{{ call.is_corrected }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="no-records">No records found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                {% if current_page > 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('app.operators', page=current_page-1, operator_name=operator_name, client_number=client_number, date_from=date_from, date_to=date_to, sort_by=sort_by, sort_order=sort_order) }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% if total_pages > 1 %}
+                {% set start_page = 1 %}
+                {% set end_page = total_pages %}
+                {% set show_range = 2 %} <!-- Количество страниц, отображаемых до и после текущей страницы -->
+
+                {% if current_page - show_range > start_page %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('app.operators', page=start_page, operator_name=operator_name, client_number=client_number, date_from=date_from, date_to=date_to, sort_by=sort_by, sort_order=sort_order) }}">{{ start_page }}</a>
+                </li>
+                {% if current_page - show_range > start_page + 1 %}
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+                {% endif %}
+                {% endif %}
+
+                {% for page_num in range(current_page - show_range, current_page + show_range + 1) if page_num >= start_page and page_num <= end_page %}
+                <li class="page-item {% if page_num == current_page %}active{% endif %}">
+                    <a class="page-link" href="{{ url_for('app.operators', page=page_num, operator_name=operator_name, client_number=client_number, date_from=date_from, date_to=date_to, sort_by=sort_by, sort_order=sort_order) }}">{{ page_num }}</a>
+                </li>
+                {% endfor %}
+
+                {% if current_page + show_range < end_page %}
+                {% if current_page + show_range < end_page - 1 %}
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+                {% endif %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('app.operators', page=end_page, operator_name=operator_name, client_number=client_number, date_from=date_from, date_to=date_to, sort_by=sort_by, sort_order=sort_order) }}">{{ end_page }}</a>
+                </li>
+                {% endif %}
+                {% endif %}
+
+                {% if current_page < total_pages %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('app.operators', page=current_page+1, operator_name=operator_name, client_number=client_number, date_from=date_from, date_to=date_to, sort_by=sort_by, sort_order=sort_order) }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </main>
+
+    <!-- Pagination -->
+
+
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../static/operators.js"></script>
+</body>
+</html>

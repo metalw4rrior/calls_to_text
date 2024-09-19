@@ -1,0 +1,105 @@
+k/* Общие стили */
+
+/* Стили для заголовка */
+
+/* Стили для контейнера заголовка */
+/*header .container {*/
+/*    display: flex;*/
+/*    align-items: center; !* Выравнивание по вертикали *!*/
+/*    width: 100%; !* Контейнер растягивается на всю ширину заголовка *!*/
+/*}*/
+
+/* Стили для заголовка */
+
+/* Стили для сайдбара */
+
+
+
+/* Стили для основного контента */
+/*#main-content {*/
+/*    margin-left: 250px; !* Отступ для боковой панели *!*/
+/*    padding: 10px;*/
+/*    transition: margin-left 0.3s ease;*/
+/*    padding-top: 20px;*/
+/*}*/
+
+/*!* Уменьшение отступов, когда боковая панель скрыта *!*/
+/*#main-content.sidebar-hidden {*/
+/*    margin-left: 0;*/
+/*}*/
+
+/*!* Добавляем отступ для таблиц *!*/
+/*.table-container {*/
+/*    margin-top: 5px; !* Отступ сверху для таблиц, увеличиваем отступ по необходимости *!*/
+/*}*/
+
+/*.table {*/
+/*    width: 100%;*/
+/*    max-width: 100%;*/
+/*    margin: 0;*/
+/*}*/
+
+/*.table th,*/
+/*.table td {*/
+/*    text-align: left;*/
+/*    padding: 10px;*/
+/*}*/
+
+
+/*.table th, .table td {*/
+/*    text-align: left;*/
+/*}*/
+
+/*.table-striped tbody tr:nth-of-type(odd) {*/
+/*    background-color: #e0f7fa; !* Лёгкий бирюзовый оттенок для строк *!*/
+/*}*/
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    list-style: none;
+    border-radius: 0.25rem;
+}
+
+.page-item {
+    margin: 0;
+}
+
+.page-link {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.25;
+    text-align: center;
+    text-decoration: none;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    color: #007bff;
+    background-color: #fff;
+    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    margin: 0 -1px; /* Ensures no gap between links */
+}
+
+.page-link:hover {
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+    color: #0056b3;
+}
+
+.page-item.active .page-link {
+    z-index: 1;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
+
+

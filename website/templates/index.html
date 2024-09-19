@@ -3,141 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Анализ текстовых файлов</title>
+    <title>Записи звонков</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Custom CSS -->
+<!--    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">-->
+    <link rel="stylesheet" href="../static/buttons.css">
+    <link rel="stylesheet" href="../static/blocks.css">
+<!--    <link rel="stylesheet" href="../static/index.css">-->
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            margin: 20px;
-            display: flex;
-            justify-content: center;
-        }
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 900px;
-            width: 100%;
-        }
-        .header {
-            text-align: center;
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .content {
-            display: flex;
-            width: 100%;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-        .table-container {
-            flex: 1;
-            margin-right: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        table, th, td {
-            border: 1px solid #ccc;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .chart-container {
-            flex: 1;
-            width: 100%;
-            margin-left: 20px;
-        }
-        .footer {
-            margin-top: 20px;
-            text-align: center;
-            color: #888;
-            font-size: 12px;
+        .transcript {
+            white-space: pre-wrap;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Анализ текстовых файлов</h1>
-        </div>
-        
-        <div class="content">
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Слово/Фраза</th>
-                            <th>Частота</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for lemma, count in lemmas_dict.items() %}
-                        <tr>
-                            <td>{{ lemma }}</td>
-                            <td>{{ count }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+<header>
+    <div class="d-flex">
+        <!-- Гамбургер меню -->
+        <button class="navbar-toggler" type="button" id="sidebarToggle">
+                <span class="navbar-toggler-icon">
+                    <i class="fas fa-bars"></i>
+                </span>
+        </button>
+        <!-- Заголовок -->
+        <h1 class="operators-header">Записи звонков</h1>
+    </div>
+</header>
 
-            <div class="chart-container">
-                <canvas id="chart"></canvas>
+<!-- Sidebar -->
+<div id="sidebarMenu" class="sidebar">
+    <h3>Меню</h3>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link" href="/"><i class="fas fa-home"></i> На главную</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/operators"><i class="fas fa-user"></i> Операторы</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/chart"><i class="fas fa-chart-line"></i> Статистика</a>
+        </li>
+<li class="nav-item">
+    <a class="nav-link" href="/manage"><i class="fas fa-cogs"></i> Управление категориями</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="/dialog"><i class="fas fa-book"></i> Словарь</a>
+</li>
+
+    </ul>
+    <!-- Форма выхода -->
+    <form action="{{ url_for('app.logout') }}" method="POST" style="margin: 0;">
+        <button type="submit" class="btn btn-danger">Выйти</button>
+    </form>
+</div>
+
+    <div class="main-content">
+        <div class="container mt-4">
+            <div class="table-responsive">
+<!--                {% if calls %}-->
+<!--                <table class="table table-striped table-bordered">-->
+<!--                    <thead>-->
+<!--                        <tr>-->
+<!--                            <th>Номер клиента</th>-->
+<!--                            <th>Имя оператора</th>-->
+<!--                            <th>Дата</th>-->
+<!--                            <th>Время</th>-->
+<!--                            <th>Расшифровка</th>-->
+<!--                            <th>Тип звонка</th>-->
+<!--                            <th>Итог звонка</th>-->
+<!--                        </tr>-->
+<!--                    </thead>-->
+<!--                    <tbody>-->
+<!--                        {% for call in calls %}-->
+<!--                        <tr>-->
+<!--                            <td>{{ call.phone_number }}</td>-->
+<!--                            <td>{{ call.operator_name }}</td>-->
+<!--                            <td>{{ call.call_date }}</td>-->
+<!--                            <td>{{ call.call_time }}</td>-->
+<!--                           <td>{{ call.transcript|replace('\n', '<br>')|safe }}</td>-->
+<!--                            <td>{{ call.call_type }}</td>-->
+<!--                            <td>{{ call.result }}</td>-->
+<!--                        </tr>-->
+<!--                        {% endfor %}-->
+<!--                    </tbody>-->
+<!--                </table>-->
+
+                {% if calls %}
+                <div>
+                    <div class="search-header search-container">
+                        <div class="search-item">Номер клиента</div>
+                        <div class="search-item">Имя оператора</div>
+                        <div class="search-item">Дата</div>
+                        <div class="search-item">Время</div>
+                        <div class="search-item">Расшифровка</div>
+                        <div class="search-item">Тип звонка</div>
+                        <div class="search-item">Итог звонка</div>
+                        <div class="search-item">Соответствие категории</div>
+                    </div>
+                    {% for call in calls %}
+                    <div class="search-body search-container">
+                        <div class="search-item">{{ call.phone_number }}</div>
+                        <div class="search-item">{{ call.operator_name }}</div>
+                        <div class="search-item">{{ call.call_date }}</div>
+                        <div class="search-item">{{ call.call_time }}</div>
+                        <div class="search-item">{{ call.transcript | replace('\n', '<br>') | safe }}</div>
+                        <div class="search-item">{{ call.call_type }}</div>
+                        <div class="search-item">{{ call.result }}</div>
+                        <div class="search-item">{{ call.is_corrected }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="no-records">No records found.</p>
+                {% endif %}
+
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        {% if current_page > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('app.index', page=current_page-1) }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        
+                        {% set start_page = 1 %}
+                        {% set end_page = total_pages %}
+                        {% set show_range = 2 %} <!-- Количество страниц, отображаемых до и после текущей страницы -->
+                        
+                        {% if current_page - show_range > start_page %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('app.index', page=start_page) }}">{{ start_page }}</a>
+                        </li>
+                        {% if current_page - show_range > start_page + 1 %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                        {% endif %}
+                        {% endif %}
+                        
+                        {% for page_num in range(current_page - show_range, current_page + show_range + 1) if page_num >= start_page and page_num <= end_page %}
+                        <li class="page-item {% if page_num == current_page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('app.index', page=page_num) }}">{{ page_num }}</a>
+                        </li>
+                        {% endfor %}
+                        
+                        {% if current_page + show_range < end_page %}
+                        {% if current_page + show_range < end_page - 1 %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                        {% endif %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('app.index', page=end_page) }}">{{ end_page }}</a>
+                        </li>
+                        {% endif %}
+                        
+                        {% if current_page < total_pages %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('app.index', page=current_page+1) }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% else %}
+                <p class="text-center text-muted">Записи не найдены.</p>
+                {% endif %}
             </div>
-        </div>
-        
-        <div class="footer">
-            <p>Анализ текстовых файлов &copy; 2024</p>
         </div>
     </div>
 
-    <!-- Подключение библиотеки Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // Данные для диаграммы
-        var labels = [];
-        var data = [];
 
-        // Заполнение данных из шаблона Flask
-        {% for lemma, count in lemmas_dict.items() %}
-            labels.push("{{ lemma }}");
-            data.push({{ count }});
-        {% endfor %}
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Custom JS for Sidebar Toggle -->
+    <script src="../static/operators.js"></script>
+<!--    <script src="../static/index.js"></script>-->
 
-        // Отрисовка диаграммы
-        var ctx = document.getElementById('chart').getContext('2d');
-        var chart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Частота',
-                    data: data,
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                scales: {
-                    x: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    </script>
 </body>
 </html>
+

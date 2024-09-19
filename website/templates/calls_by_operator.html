@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operator Calls</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        header {
+            background-color: #343a40;
+            color: #f8f9fa;
+            padding: 20px 10%;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        header a {
+            text-decoration: none;
+            color: #007bff;
+            font-size: 16px;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        header a:hover {
+            color: #0056b3;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 30px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        table th {
+            background-color: #007bff;
+            color: #fff;
+            font-size: 18px;
+        }
+        table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        table tbody tr:hover {
+            background-color: #e9ecef;
+        }
+        .no-records {
+            text-align: center;
+            padding: 20px;
+            font-size: 1.2em;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Calls for Operator {{ operator_name }}</h1>
+        <a href="/operators" class="btn">Back to Operators</a>
+    </header>
+    <div class="container">
+        {% if calls %}
+        <table id="callTable">
+            <thead>
+                <tr>
+                    <th>Phone Number</th>
+                    <th>Operator Name</th>
+                    <th>Call Date</th>
+                    <th>Call Time</th>
+                    <th>Transcript</th>
+                    <th>Call Type</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for call in calls %}
+                <tr>
+                    <td>{{ call.phone_number }}</td>
+                    <td>{{ call.operator_name }}</td>
+                    <td>{{ call.call_date }}</td>
+                    <td>{{ call.call_time }}</td>
+                    <td>{{ call.transcript|replace('\n', '<br>')|safe }}</td>
+                    <td>{{ call.call_type }}</td>
+                    <td>{{ call.result }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="no-records">No records found.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

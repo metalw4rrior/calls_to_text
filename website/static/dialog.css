@@ -1,0 +1,21 @@
+/* static/dialog.css */
+
+.form-group label {
+    font-weight: bold;
+}
+
+.form-group input {
+    margin-bottom: 10px;
+}
+
+.keyword-list {
+    margin-top: 20px;
+}
+
+.keyword-item {
+    margin-bottom: 10px;
+}
+
+.delete-button {
+    margin-left: 10px;
+}

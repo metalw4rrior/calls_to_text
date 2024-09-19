@@ -1,0 +1,16 @@
+/* Custom styles for the charts and layout */
+body {
+    background-color: #e9f5f9;
+}
+
+.card-title {
+    color: #0094b6;
+    font-size: 1.25rem;
+    margin-bottom: 15px;
+}
+
+canvas {
+    max-width: 100%;
+    height: auto;
+}
+
