@@ -11,12 +11,12 @@ redis_client = redis.StrictRedis(host='host',password='pass', port=6379, db=0)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-FASTAPI_SERVER_URL = "http://api_server/process"  # Убедитесь, что эндпоинт соответствует
+FASTAPI_SERVER_URL = "http://api_server/process"  
 
 def process_queue():
     while True:
         try:
-            # Получаем запрос из очереди
+
             request_data = redis_client.lpop('audio_requests')
             if request_data:
                 data = json.loads(request_data)
@@ -35,7 +35,7 @@ def process_queue():
             else:
                 logger.info("Queue is empty, waiting for new requests.")
             
-            time.sleep(1)  # Пауза между проверками очереди
+            time.sleep(1)  
         
         except Exception as e:
             logger.error(f"Error processing queue: {e}")
